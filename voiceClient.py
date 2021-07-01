@@ -5,7 +5,7 @@ import pyaudio
 import threading
 
 port = 6190
-host = "192.168.2.250"
+host = "0.0.0.0"
 
 chunk = 1024
 sample_format = pyaudio.paInt16  # 16 bits per sample
@@ -26,7 +26,7 @@ class Client:
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     def start(self, port, host):
         self.clientSocket.connect((host, port))
-        print("CONNECTED")
+        print("Connection Established.")
     
         
         stream = p.open(format=sample_format,
@@ -38,23 +38,7 @@ class Client:
     
         while 1:
             clientData.reset()
-        
             data = stream.read(chunk)
-            '''
-            clientData.frames.append(data)
-            
-            stream.stop_stream()
-            stream.close()
-            p.terminate()
-            data = pickle.dumps(clientData)
-            print(clientData.frames)
-            
-            for lines in range(0, len(clientData.frames), 50): 
-                outputData = clientData.frames[lines:lines+50] 
-                self.clientSocket.sendall(outputData) 
-                #print(outputData)
-            #self.clientSocket.send(EOF)
-            '''
             self.clientSocket.sendall(data)
     def recieve(self):
         Rstream = p.open(format=sample_format,
@@ -76,8 +60,6 @@ recieve = threading.Thread(target=clientInstance.recieve, args=())
 recieve.start()
 
 recieve.join()
-
 start.join()
-print("REACHED END")
 
 
